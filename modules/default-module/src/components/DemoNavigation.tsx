@@ -1,15 +1,24 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 interface DemoNavigationProps {
   basePath: string;
 }
 
 const DemoNavigation = ({ basePath }: DemoNavigationProps) => {
+  const location = useLocation();
   const navItems = [
-    { path: '/', label: 'Home', icon: '🏠' },
-    { path: '/data', label: 'Data Table', icon: '📊' },
-    { path: '/settings', label: 'Settings', icon: '⚙️' },
+    { path: '/', label: 'Home', icon: '🏠', exact: true },
+    { path: '/data', label: 'Data Table', icon: '📊', exact: false },
+    { path: '/settings', label: 'Settings', icon: '⚙️', exact: false },
   ];
+
+  const isActive = (itemPath: string, exact: boolean) => {
+    const fullPath = `${basePath}${itemPath}`;
+    if (exact) {
+      return location.pathname === fullPath || location.pathname === basePath;
+    }
+    return location.pathname.startsWith(fullPath) && location.pathname !== basePath;
+  };
 
   return (
     <nav
@@ -23,25 +32,29 @@ const DemoNavigation = ({ basePath }: DemoNavigationProps) => {
         marginBottom: '1.5rem',
       }}
     >
-      {navItems.map((item) => (
-        <NavLink
-          key={item.path}
-          to={`${basePath}${item.path}`}
-          style={({ isActive }) => ({
-            padding: '0.75rem 1.5rem',
-            borderRadius: '8px',
-            textDecoration: 'none',
-            fontWeight: '500',
-            transition: 'all 0.2s',
-            backgroundColor: isActive ? 'var(--color-primary)' : 'transparent',
-            color: isActive ? '#ffffff' : 'var(--color-text)',
-            border: isActive ? 'none' : '1px solid var(--color-border)',
-          })}
-        >
-          <span style={{ marginRight: '0.5rem' }}>{item.icon}</span>
-          {item.label}
-        </NavLink>
-      ))}
+      {navItems.map((item) => {
+        const active = isActive(item.path, item.exact || false);
+        return (
+          <NavLink
+            key={item.path}
+            to={`${basePath}${item.path}`}
+            end={item.exact}
+            style={{
+              padding: '0.75rem 1.5rem',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontWeight: '500',
+              transition: 'all 0.2s',
+              backgroundColor: active ? 'var(--color-primary)' : 'transparent',
+              color: active ? '#ffffff' : 'var(--color-text)',
+              border: active ? 'none' : '1px solid var(--color-border)',
+            }}
+          >
+            <span style={{ marginRight: '0.5rem' }}>{item.icon}</span>
+            {item.label}
+          </NavLink>
+        );
+      })}
     </nav>
   );
 };
