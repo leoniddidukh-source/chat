@@ -2,15 +2,19 @@ import { useEffect, useMemo } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import defaultModule from '@modules/default-module';
 import { useModuleRegistry } from './core/modules/ModuleRegistryContext';
+import { useAuth } from './core/auth/AuthContext';
 import { ErrorBoundary } from './core/errors/ErrorBoundary';
-import MainLayout from './components/layout/MainLayout';
+import ProtectedRoute from './components/common/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import ModulesPlaceholderPage from './pages/ModulesPlaceholderPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import ForbiddenPage from './components/common/ForbiddenPage';
 import PermissionGate from './core/security/PermissionGate';
 
 const App = () => {
   const { modules, registerModule } = useModuleRegistry();
+  const { isAuthenticated } = useAuth();
 
   const bootstrapModules = useMemo(() => [defaultModule], []);
 
@@ -27,28 +31,30 @@ const App = () => {
             key={`${module.manifest.id}:${path}`}
             path={path}
             element={
-              <ErrorBoundary
-                fallback={
-                  <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
-                    <h2 style={{ color: '#ef4444' }}>⚠️ Module Error</h2>
-                    <p style={{ marginTop: '1rem', opacity: 0.7 }}>
-                      The module "{module.manifest.title}" encountered an error.
-                    </p>
-                    <button
-                      className="primary-button"
-                      onClick={() => window.location.reload()}
-                      type="button"
-                      style={{ marginTop: '1rem' }}
-                    >
-                      Reload
-                    </button>
-                  </div>
-                }
-              >
-                <PermissionGate requiredPermissions={module.manifest.requiredPermissions}>
-                  {route.element}
-                </PermissionGate>
-              </ErrorBoundary>
+              <ProtectedRoute>
+                <ErrorBoundary
+                  fallback={
+                    <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
+                      <h2 style={{ color: '#ef4444' }}>⚠️ Module Error</h2>
+                      <p style={{ marginTop: '1rem', opacity: 0.7 }}>
+                        The module "{module.manifest.title}" encountered an error.
+                      </p>
+                      <button
+                        className="primary-button"
+                        onClick={() => window.location.reload()}
+                        type="button"
+                        style={{ marginTop: '1rem' }}
+                      >
+                        Reload
+                      </button>
+                    </div>
+                  }
+                >
+                  <PermissionGate requiredPermissions={module.manifest.requiredPermissions}>
+                    {route.element}
+                  </PermissionGate>
+                </ErrorBoundary>
+              </ProtectedRoute>
             }
           />
         );
@@ -57,15 +63,45 @@ const App = () => {
   };
 
   return (
-    <MainLayout>
-      <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/modules" element={<ModulesPlaceholderPage />} />
-        {renderModuleRoutes()}
-        <Route path="/403" element={<ForbiddenPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </MainLayout>
+    <Routes>
+      {/* Public routes - no layout */}
+      <Route 
+        path="/login" 
+        element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
+      />
+      <Route 
+        path="/register" 
+        element={isAuthenticated ? <Navigate to="/" replace /> : <RegisterPage />} 
+      />
+      
+      {/* Protected routes - with layout */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/modules"
+        element={
+          <ProtectedRoute>
+            <ModulesPlaceholderPage />
+          </ProtectedRoute>
+        }
+      />
+      {renderModuleRoutes()}
+      <Route
+        path="/403"
+        element={
+          <ProtectedRoute>
+            <ForbiddenPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/register"} replace />} />
+    </Routes>
   );
 };
 

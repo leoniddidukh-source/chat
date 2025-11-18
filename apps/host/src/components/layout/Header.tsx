@@ -1,9 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../core/auth/AuthContext';
 import { useTheme } from '@erp/theme';
 
 const Header = () => {
-  const { user, isAuthenticated, loginAsAdmin, loginAsUser, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <header className="app-header">
@@ -13,7 +15,7 @@ const Header = () => {
           <p className="app-subtitle">
             {isAuthenticated
               ? `${user?.name} (${user?.role})`
-              : 'Not authenticated — use a quick login below.'}
+              : 'Not authenticated — please log in to continue.'}
           </p>
         </div>
       </div>
@@ -28,14 +30,13 @@ const Header = () => {
             Logout
           </button>
         ) : (
-          <>
-            <button className="secondary-button" onClick={loginAsUser} type="button">
-              Login as User
-            </button>
-            <button className="primary-button" onClick={loginAsAdmin} type="button">
-              Login as Admin
-            </button>
-          </>
+          <button 
+            className="primary-button" 
+            onClick={() => navigate('/login')} 
+            type="button"
+          >
+            Login
+          </button>
         )}
       </div>
     </header>
