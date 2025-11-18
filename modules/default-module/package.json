@@ -1,0 +1,16 @@
+{
+  "name": "@modules/default-module",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-router-dom": "^7.0.2",
+    "@erp/shared": "*",
+    "@erp/theme": "*"
+  },
+  "exports": {
+    ".": "./src/index.tsx"
+  }
+}
+
