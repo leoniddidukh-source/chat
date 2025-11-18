@@ -82,15 +82,16 @@ const UserManagementPage = () => {
                   backgroundColor: selectedUser?.id === userConfig.id 
                     ? 'var(--color-bg)' 
                     : 'transparent',
+                  color: 'var(--color-text)',
                   cursor: 'pointer',
                   transition: 'all 0.2s'
                 }}
               >
-                <div style={{ fontWeight: '500' }}>{userConfig.name}</div>
-                <div style={{ fontSize: '0.875rem', opacity: 0.7, marginTop: '0.25rem' }}>
+                <div style={{ fontWeight: '500', color: 'var(--color-text)' }}>{userConfig.name}</div>
+                <div style={{ fontSize: '0.875rem', opacity: 0.7, marginTop: '0.25rem', color: 'var(--color-text)' }}>
                   {userConfig.email}
                 </div>
-                <div style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '0.25rem', color: 'var(--color-text)' }}>
                   {userConfig.role}
                 </div>
               </button>
@@ -139,8 +140,8 @@ const UserManagementPage = () => {
                       style={{ width: '1.25rem', height: '1.25rem', cursor: 'pointer' }}
                     />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: '500' }}>{label}</div>
-                      <div style={{ fontSize: '0.75rem', opacity: 0.6, fontFamily: 'monospace' }}>
+                      <div style={{ fontWeight: '500', color: 'var(--color-text)' }}>{label}</div>
+                      <div style={{ fontSize: '0.75rem', opacity: 0.6, fontFamily: 'monospace', color: 'var(--color-text)' }}>
                         {key}
                       </div>
                     </div>
@@ -164,18 +165,19 @@ const UserManagementPage = () => {
               padding: '1rem', 
               backgroundColor: 'var(--color-bg)', 
               borderRadius: '8px',
-              fontSize: '0.875rem'
+              fontSize: '0.875rem',
+              color: 'var(--color-text)'
             }}>
-              <strong>Current Permissions:</strong>
-              <div style={{ marginTop: '0.5rem', fontFamily: 'monospace' }}>
+              <strong style={{ color: 'var(--color-text)' }}>Current Permissions:</strong>
+              <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', color: 'var(--color-text)' }}>
                 {editedPermissions.length > 0 ? (
                   editedPermissions.map(p => (
-                    <div key={p} style={{ marginTop: '0.25rem' }}>
+                    <div key={p} style={{ marginTop: '0.25rem', color: 'var(--color-text)' }}>
                       • {p} {AVAILABLE_PERMISSIONS[p as keyof typeof AVAILABLE_PERMISSIONS] && `(${AVAILABLE_PERMISSIONS[p as keyof typeof AVAILABLE_PERMISSIONS]})`}
                     </div>
                   ))
                 ) : (
-                  <div style={{ opacity: 0.6 }}>No permissions assigned</div>
+                  <div style={{ opacity: 0.6, color: 'var(--color-text)' }}>No permissions assigned</div>
                 )}
               </div>
             </div>

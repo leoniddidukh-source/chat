@@ -54,8 +54,13 @@ const ModulesPlaceholderPage = () => {
                           borderRadius: '12px',
                           fontSize: '0.75rem',
                           fontWeight: '500',
-                          backgroundColor: isEnabled ? '#10b981' : '#6b7280',
-                          color: '#ffffff'
+                          backgroundColor: isEnabled 
+                            ? 'var(--color-primary)' 
+                            : 'var(--color-border)',
+                          color: isEnabled 
+                            ? '#ffffff' 
+                            : 'var(--color-text)',
+                          opacity: isEnabled ? 1 : 0.7
                         }}
                       >
                         {isEnabled ? 'Enabled' : 'Disabled'}
@@ -67,8 +72,10 @@ const ModulesPlaceholderPage = () => {
                             borderRadius: '12px',
                             fontSize: '0.75rem',
                             fontWeight: '500',
-                            backgroundColor: '#f59e0b',
-                            color: '#ffffff'
+                            backgroundColor: 'var(--color-bg)',
+                            color: 'var(--color-text)',
+                            opacity: 0.7,
+                            border: '1px solid var(--color-border)'
                           }}
                         >
                           No Access
