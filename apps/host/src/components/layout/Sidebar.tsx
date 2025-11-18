@@ -15,6 +15,9 @@ const Sidebar = () => {
         <p className="sidebar-label">Core</p>
         <SidebarLink to="/" label="Dashboard" exact />
         <SidebarLink to="/modules" label="Modules" />
+        {user?.permissions.includes('*') && (
+          <SidebarLink to="/users" label="User Management" />
+        )}
 
         <p className="sidebar-label">Modules</p>
         {modules.length === 0 && <span className="sidebar-empty">No modules available</span>}

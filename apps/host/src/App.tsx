@@ -7,6 +7,7 @@ import { ErrorBoundary } from './core/errors/ErrorBoundary';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import ModulesPlaceholderPage from './pages/ModulesPlaceholderPage';
+import UserManagementPage from './pages/UserManagementPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForbiddenPage from './components/common/ForbiddenPage';
@@ -88,6 +89,16 @@ const App = () => {
         element={
           <ProtectedRoute>
             <ModulesPlaceholderPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/users"
+        element={
+          <ProtectedRoute>
+            <PermissionGate requiredPermissions={['*', 'users.manage']}>
+              <UserManagementPage />
+            </PermissionGate>
           </ProtectedRoute>
         }
       />

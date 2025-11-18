@@ -6,27 +6,25 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { loginAsAdmin, loginAsUser } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    // Simple demo authentication
-    // In production, this would call an API
-    if (email === 'admin@example.com' && password === 'admin') {
-      loginAsAdmin();
-      navigate('/');
-    } else if (email === 'user@example.com' && password === 'user') {
-      loginAsUser();
-      navigate('/');
-    } else if (email && password) {
-      // Default to user role for any other credentials
-      loginAsUser();
+    if (!email || !password) {
+      setError('Please enter email and password');
+      return;
+    }
+
+    // Use the new login function
+    const success = login(email, password);
+    
+    if (success) {
       navigate('/');
     } else {
-      setError('Please enter email and password');
+      setError('Invalid email or password');
     }
   };
 
