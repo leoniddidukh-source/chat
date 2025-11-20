@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTheme } from '@erp/theme';
 import type { User } from '@erp/shared';
 
 // Note: In a production system, modules would access auth through a module API
@@ -20,7 +19,8 @@ const useMockAuth = (): { user: User | null } => {
 
 const DemoHomePage = () => {
   const { user } = useMockAuth();
-  const { theme } = useTheme();
+  // Get theme from document (set by ThemeProvider in Host App)
+  const theme = typeof document !== 'undefined' ? document.documentElement.dataset.theme || 'light' : 'light';
   const [counter, setCounter] = useState(0);
 
   return (

@@ -3,20 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useTheme } from '@erp/theme';
 import { hasPermission } from '../security/permissionUtils';
-import type { ModuleAPI } from '@erp/shared';
+import type { ModuleAPI, User } from '@erp/shared';
 
 const ModuleAPIContext = createContext<ModuleAPI | undefined>(undefined);
 
 export const ModuleAPIProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const api = useMemo<ModuleAPI>(
     () => ({
-      getUser: () => user,
+      getUser: (): User | null => user,
       hasPermission: (permissions: string[]) => hasPermission(user, permissions),
       getTheme: () => theme,
+      toggleTheme: () => toggleTheme(),
       navigate: (path: string) => navigate(path),
       notify: (message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') => {
         // TODO: Implement notification system
@@ -27,7 +28,7 @@ export const ModuleAPIProvider = ({ children }: { children: React.ReactNode }) =
         logFn(`[Module] ${message}`, data || '');
       }
     }),
-    [user, theme, navigate]
+    [user, theme, toggleTheme, navigate]
   );
 
   return <ModuleAPIContext.Provider value={api}>{children}</ModuleAPIContext.Provider>;

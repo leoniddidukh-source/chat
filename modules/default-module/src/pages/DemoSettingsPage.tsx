@@ -1,7 +1,11 @@
-import { useTheme } from '@erp/theme';
-
 const DemoSettingsPage = () => {
-  const { theme, toggleTheme } = useTheme();
+  // Get theme from document (set by ThemeProvider in Host App)
+  const theme = typeof document !== 'undefined' ? document.documentElement.dataset.theme || 'light' : 'light';
+  
+  // Toggle theme by dispatching a custom event that Host App can listen to
+  const toggleTheme = () => {
+    window.dispatchEvent(new CustomEvent('toggle-theme'));
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

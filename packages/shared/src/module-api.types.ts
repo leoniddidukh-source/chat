@@ -21,6 +21,11 @@ export interface ModuleAPI {
   getTheme: () => string;
 
   /**
+   * Toggle theme between light and dark
+   */
+  toggleTheme: () => void;
+
+  /**
    * Navigate to a route (programmatic navigation)
    */
   navigate: (path: string) => void;

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '../core/auth/AuthContext';
-import { getAllPermissions, DEFAULT_USERS, type UserConfig, AVAILABLE_PERMISSIONS } from '../core/auth/userPermissions';
+import { getAllPermissions, DEFAULT_USERS, type UserConfig, AVAILABLE_PERMISSIONS, type PermissionKey } from '../core/auth/userPermissions';
 
 const UserManagementPage = () => {
   const { user } = useAuth();
   const [users] = useState<UserConfig[]>(Object.values(DEFAULT_USERS));
   const [selectedUser, setSelectedUser] = useState<UserConfig | null>(null);
-  const [editedPermissions, setEditedPermissions] = useState<string[]>([]);
+  const [editedPermissions, setEditedPermissions] = useState<PermissionKey[]>([]);
 
   // Check if current user can manage users
   const canManage = user?.permissions.includes('*') || user?.permissions.includes('users.manage');
@@ -25,13 +25,13 @@ const UserManagementPage = () => {
     setEditedPermissions([...userConfig.permissions]);
   };
 
-  const togglePermission = (permission: string) => {
+  const togglePermission = (permission: PermissionKey) => {
     if (permission === '*') {
       // If selecting admin, only keep '*'
       setEditedPermissions(['*']);
     } else {
       // Remove '*' if selecting specific permissions
-      const newPerms = editedPermissions.filter(p => p !== '*');
+      const newPerms = editedPermissions.filter(p => p !== '*') as PermissionKey[];
       if (newPerms.includes(permission)) {
         setEditedPermissions(newPerms.filter(p => p !== permission));
       } else {

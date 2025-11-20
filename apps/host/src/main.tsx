@@ -9,21 +9,31 @@ import { ErrorBoundary } from './core/errors/ErrorBoundary';
 import App from './App';
 import './styles/global.css';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <ThemeProvider>
-        <AuthProvider>
-          <ModuleRegistryProvider>
-            <BrowserRouter>
-              <ModuleAPIProvider>
-                <App />
-              </ModuleAPIProvider>
-            </BrowserRouter>
-          </ModuleRegistryProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  </React.StrictMode>
-);
+const startApp = async () => {
+  if (typeof __webpack_init_sharing__ === 'function') {
+    await __webpack_init_sharing__('default');
+  }
+
+  ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+    <React.StrictMode>
+      <ErrorBoundary>
+        <ThemeProvider>
+          <AuthProvider>
+            <ModuleRegistryProvider>
+              <BrowserRouter>
+                <ModuleAPIProvider>
+                  <App />
+                </ModuleAPIProvider>
+              </BrowserRouter>
+            </ModuleRegistryProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
+    </React.StrictMode>
+  );
+};
+
+startApp().catch((error) => {
+  console.error('Failed to start host app:', error);
+});
 

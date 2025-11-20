@@ -2,15 +2,27 @@
   "name": "@modules/default-module",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
+  "scripts": {
+    "dev": "webpack serve",
+    "build": "webpack --mode production"
+  },
   "dependencies": {
     "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-router-dom": "^7.0.2",
     "@erp/shared": "*",
     "@erp/theme": "*"
   },
-  "exports": {
-    ".": "./src/index.tsx"
+  "devDependencies": {
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.6.2",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0"
   }
 }
 

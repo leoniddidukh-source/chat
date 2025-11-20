@@ -1,9 +1,28 @@
 import { GoogleGenAI } from '@google/genai';
 
 // Gemini API configuration
-// The client gets the API key from the environment variable `GEMINI_API_KEY`
-// For Vite, we use VITE_GEMINI_API_KEY and map it to GEMINI_API_KEY
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY';
+// In the webpack environment we do not have `import.meta.env`
+// so we read from window/global configuration or fallback to a placeholder.
+const getGeminiApiKey = () => {
+  if (typeof window !== 'undefined') {
+    const envFromWindow =
+      window.__APP_CONFIG__?.GEMINI_API_KEY ||
+      window.__APP_CONFIG__?.VITE_GEMINI_API_KEY ||
+      window.GEMINI_API_KEY ||
+      window.VITE_GEMINI_API_KEY;
+    if (envFromWindow) {
+      return envFromWindow;
+    }
+  }
+
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY';
+  }
+
+  return 'YOUR_GEMINI_API_KEY';
+};
+
+const GEMINI_API_KEY = getGeminiApiKey();
 
 let genAI = null;
 

@@ -89,7 +89,7 @@ export const ModuleRegistryProvider = ({ children }: PropsWithChildren<unknown>)
       }
 
       return enabledModules.filter((module) =>
-        module.manifest.requiredPermissions.every((permission) => permissions.includes(permission))
+        module.manifest.requiredPermissions.every((permission: string) => permissions.includes(permission))
       );
     },
     [modules]

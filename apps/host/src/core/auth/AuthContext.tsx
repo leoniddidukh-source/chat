@@ -1,15 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { getUserByEmail } from './userPermissions';
-
-export type Role = 'admin' | 'user' | 'manager';
-
-export interface User {
-  id: string;
-  name: string;
-  role: Role;
-  permissions: string[];
-  email?: string;
-}
+import type { User } from '@erp/shared';
 
 interface AuthContextValue {
   user: User | null;

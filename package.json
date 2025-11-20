@@ -9,8 +9,13 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace @erp/host",
+    "dev:host": "npm run dev --workspace @erp/host",
+    "dev:default-module": "npm run dev --workspace @modules/default-module",
+    "dev:chat-module": "npm run dev --workspace @modules/chat-module",
     "build": "npm run build --workspace @erp/host",
-    "preview": "npm run preview --workspace @erp/host",
+    "build:host": "npm run build --workspace @erp/host",
+    "build:default-module": "npm run build --workspace @modules/default-module",
+    "build:chat-module": "npm run build --workspace @modules/chat-module",
     "lint": "npm run lint --workspace @erp/host"
   }
 }

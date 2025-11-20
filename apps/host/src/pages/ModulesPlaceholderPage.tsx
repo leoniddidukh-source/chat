@@ -39,7 +39,7 @@ const ModulesPlaceholderPage = () => {
             const isEnabled = module.manifest.enabled !== false;
             const hasAccess = !user || 
               user.permissions.includes('*') || 
-              module.manifest.requiredPermissions.every(p => user.permissions.includes(p));
+              module.manifest.requiredPermissions.every((p: string) => user.permissions.includes(p));
 
             return (
               <section key={module.manifest.id} className="card">
@@ -112,7 +112,7 @@ const ModulesPlaceholderPage = () => {
                         <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
                           <strong>Required Permissions:</strong>
                           <div style={{ marginTop: '0.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                            {module.manifest.requiredPermissions.map((perm) => (
+                            {module.manifest.requiredPermissions.map((perm: string) => (
                               <span
                                 key={perm}
                                 style={{
@@ -134,7 +134,7 @@ const ModulesPlaceholderPage = () => {
                         <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
                           <strong>Dependencies:</strong>
                           <div style={{ marginTop: '0.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                            {module.manifest.dependencies.map((dep) => (
+                            {module.manifest.dependencies.map((dep: string) => (
                               <span
                                 key={dep}
                                 style={{

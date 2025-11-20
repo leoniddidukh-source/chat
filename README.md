@@ -19,13 +19,29 @@ This repository hosts the core "Host App" for a modular ERP platform plus shared
    npm install
    ```
 
-2. **Start the development server:**
+2. **Start the development servers:**
+   
+   **Important:** Modules are now separate applications that must be running simultaneously.
+   
+   Open multiple terminals:
+   
    ```bash
-   npm run dev
+   # Terminal 1 - Host App (main application)
+   npm run dev:host
+   
+   # Terminal 2 - Default Module
+   npm run dev:default-module
+   
+   # Terminal 3 - Chat Module
+   npm run dev:chat-module
    ```
 
 3. **Open your browser:**
-   - The app will be available at `http://localhost:5173` (or the port shown in terminal)
+   - Host App will be available at `http://localhost:3000`
+   - Default Module at `http://localhost:3001`
+   - Chat Module at `http://localhost:3002`
+   
+   **Note:** Modules are loaded dynamically via Webpack Module Federation, so all three servers must be running.
 
 ### Quick Demo
 
@@ -50,9 +66,17 @@ Once the app is running:
 
 ### Other Commands
 
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
+- `npm run build` - Build Host App for production
+- `npm run build:host` - Build Host App
+- `npm run build:default-module` - Build Default Module
+- `npm run build:chat-module` - Build Chat Module
 - `npm run lint` - Run ESLint
+
+### Architecture
+
+This project uses **Webpack Module Federation** for dynamic module loading. Each module is a separate application that is built independently and loaded at runtime.
+
+For more details, see `docs/webpack-module-federation.md`
 
 ### Documentation
 
