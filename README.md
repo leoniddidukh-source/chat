@@ -37,40 +37,80 @@ This repository hosts the core "Host App" for a modular ERP platform plus shared
    ```
 
 3. **Open your browser:**
-   - Host App will be available at `http://localhost:3000`
-   - Default Module at `http://localhost:3001`
-   - Chat Module at `http://localhost:3002`
+   - Navigate to `http://localhost:3000` - this is the main Host App
+   - The Host App will automatically load modules from:
+     - Default Module at `http://localhost:3001`
+     - Chat Module at `http://localhost:3002`
    
-   **Note:** Modules are loaded dynamically via Webpack Module Federation, so all three servers must be running.
+   **Important:** All three servers must be running for the application to work properly. Modules are loaded dynamically via Webpack Module Federation.
+   
+   **Note:** You don't need to manually open `localhost:3001` or `localhost:3002` - they are accessed automatically by the Host App.
 
 ### Quick Demo
 
-Once the app is running:
+Once all three servers are running:
 
-1. **Login as Admin:**
-   - Click "Login as Admin" in the header
-   - You'll see all modules in the sidebar (including "Demo Module")
-   - Admin has `["*"]` permissions (access to everything)
+1. **Open the application:**
+   - Navigate to `http://localhost:3000` in your browser
+   - You'll see the login page
 
-2. **Login as User:**
-   - Click "Logout" then "Login as User"
-   - You'll see only modules you have permission for
-   - Regular user has `["dashboard.view"]` permissions (limited access)
+2. **Login with demo credentials:**
+   
+   **Admin User:**
+   - Email: `admin@example.com`
+   - Password: (any password works in demo mode)
+   - Has `["*"]` permissions (access to everything)
+   - Can see all modules in the sidebar
 
-3. **Toggle Theme:**
-   - Click "Toggle Theme" button in the header to switch between light/dark modes
+   **Regular User:**
+   - Email: `user@example.com`
+   - Password: (any password works in demo mode)
+   - Has `["dashboard.view", "modules.chat.view"]` permissions
+   - Can see limited modules
 
-4. **Navigate:**
-   - Use the sidebar to navigate between Dashboard, Modules, and registered module routes
-   - Try accessing `/modules/demo` as admin vs user to see permission gates in action
+   **Manager User:**
+   - Email: `manager@example.com`
+   - Password: (any password works in demo mode)
+   - Has `["dashboard.view", "modules.demo.view", "modules.chat.view"]` permissions
 
-### Other Commands
+3. **Explore the application:**
+   - **Toggle Theme:** Click "Toggle Theme" button in the header to switch between light/dark modes
+   - **Navigate:** Use the sidebar to navigate between Dashboard, Modules, User Management, and module routes
+   - **Try modules:** Access Demo Module (`/modules/demo`) and Chat Module (`/modules/chat`)
+   - **Test permissions:** Logout and login as different users to see permission-based access control
 
+### Available Commands
+
+**Development:**
+- `npm run dev:host` - Start Host App development server (port 3000)
+- `npm run dev:default-module` - Start Default Module development server (port 3001)
+- `npm run dev:chat-module` - Start Chat Module development server (port 3002)
+
+**Production Build:**
 - `npm run build` - Build Host App for production
 - `npm run build:host` - Build Host App
 - `npm run build:default-module` - Build Default Module
 - `npm run build:chat-module` - Build Chat Module
-- `npm run lint` - Run ESLint
+
+**Code Quality:**
+- `npm run lint` - Run ESLint on Host App
+
+### Troubleshooting
+
+**Modules not loading?**
+- Make sure all three servers are running (host, default-module, chat-module)
+- Check browser console for errors
+- Verify that ports 3000, 3001, and 3002 are not blocked by firewall
+
+**White screen or errors?**
+- Clear browser cache and hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
+- Check that all dependencies are installed: `npm install`
+- Restart all development servers
+
+**TypeScript errors?**
+- The project uses `transpileOnly: true` in webpack config for faster builds
+- Type checking is disabled during development for performance
+- For full type checking, modify `webpack.config.js` in each app/module
 
 ### Architecture
 
