@@ -16,14 +16,16 @@
     "paths": {
       "@erp/shared": ["packages/shared/src/index"],
       "@erp/theme": ["packages/theme/src/index"],
-      "@modules/default-module": ["modules/default-module/src/index"]
+      "@modules/default-module": ["modules/default-module/src/index"],
+      "@modules/chat-module": ["modules/chat-module/src/index"]
     }
   },
   "include": [],
   "references": [
     { "path": "packages/shared" },
     { "path": "packages/theme" },
-    { "path": "modules/default-module" }
+    { "path": "modules/default-module" },
+    { "path": "modules/chat-module" }
   ]
 }
 

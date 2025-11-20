@@ -8,7 +8,8 @@ export default defineConfig({
     alias: {
       '@erp/shared': path.resolve(__dirname, '../../packages/shared/src'),
       '@erp/theme': path.resolve(__dirname, '../../packages/theme/src'),
-      '@modules/default-module': path.resolve(__dirname, '../../modules/default-module/src')
+      '@modules/default-module': path.resolve(__dirname, '../../modules/default-module/src'),
+      '@modules/chat-module': path.resolve(__dirname, '../../modules/chat-module/src')
     }
   }
 });

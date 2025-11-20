@@ -1,0 +1,32 @@
+.chat-module-root {
+  width: 100%;
+  min-height: 80vh;
+  background: var(--color-surface);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+  overflow: hidden;
+}
+
+.chat-module-root .h-screen {
+  height: 100% !important;
+}
+
+.chat-module-root .w-screen {
+  width: 100% !important;
+}
+
+.chat-module-root .bg-white {
+  background-color: #ffffff !important;
+}
+
+.chat-module-root button {
+  font-family: inherit;
+}
+
+@media (max-width: 768px) {
+  .chat-module-root {
+    min-height: 70vh;
+  }
+}
+

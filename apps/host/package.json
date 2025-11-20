@@ -12,6 +12,8 @@
   "dependencies": {
     "@erp/shared": "*",
     "@erp/theme": "*",
+    "@google/genai": "^1.29.1",
+    "firebase": "^12.6.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.0.2"

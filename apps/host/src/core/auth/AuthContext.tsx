@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { DEFAULT_USERS, getUserByEmail, type UserConfig } from './userPermissions';
+import { getUserByEmail } from './userPermissions';
 
 export type Role = 'admin' | 'user' | 'manager';
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import defaultModule from '@modules/default-module';
+import chatModule from '@modules/chat-module';
 import { useModuleRegistry } from './core/modules/ModuleRegistryContext';
 import { useAuth } from './core/auth/AuthContext';
 import { ErrorBoundary } from './core/errors/ErrorBoundary';
@@ -17,7 +18,7 @@ const App = () => {
   const { modules, registerModule } = useModuleRegistry();
   const { isAuthenticated } = useAuth();
 
-  const bootstrapModules = useMemo(() => [defaultModule], []);
+  const bootstrapModules = useMemo(() => [defaultModule, chatModule], []);
 
   useEffect(() => {
     bootstrapModules.forEach(registerModule);

@@ -11,6 +11,7 @@ export const AVAILABLE_PERMISSIONS = {
   
   // Modules
   'modules.demo.view': 'View Demo Module',
+  'modules.chat.view': 'View Chat Module',
   'modules.manage': 'Manage Modules',
   
   // User Management
@@ -53,14 +54,14 @@ export const DEFAULT_USERS: Record<string, UserConfig> = {
     name: 'Demo User',
     email: 'user@example.com',
     role: 'user',
-    permissions: ['dashboard.view']
+    permissions: ['dashboard.view', 'modules.chat.view']
   },
   manager: {
     id: 'manager-1',
     name: 'Manager User',
     email: 'manager@example.com',
     role: 'manager',
-    permissions: ['dashboard.view', 'modules.demo.view']
+    permissions: ['dashboard.view', 'modules.demo.view', 'modules.chat.view']
   }
 };
 
