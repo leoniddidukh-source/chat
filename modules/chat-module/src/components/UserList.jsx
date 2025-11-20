@@ -71,7 +71,14 @@ const UserList = ({ onClose }) => {
       </div>
 
       {/* Contact List */}
-      <div className="flex-1 overflow-y-auto py-2.5">
+      <div 
+        className="flex-1 overflow-y-auto py-2.5"
+        style={{ 
+          maxHeight: 'calc(100vh - 180px)',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         {/* AI Assistant Section - Always at the top */}
         <div
           onClick={() => handleUserSelect(AI_ASSISTANT.id)}
