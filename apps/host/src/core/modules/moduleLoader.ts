@@ -17,15 +17,36 @@ type RemoteWindow = Window &
     [scope: string]: RemoteContainer | undefined;
   };
 
+// Determine if we're in production based on hostname at runtime
+const getModuleUrl = (moduleId: string, devUrl: string, prodUrl: string): string => {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    // Use production URLs if not on localhost
+    if (!hostname.includes('localhost') && !hostname.includes('127.0.0.1')) {
+      return prodUrl;
+    }
+  }
+  // Fallback to dev URL or check NODE_ENV during build
+  return process.env.NODE_ENV === 'production' ? prodUrl : devUrl;
+};
+
 const remoteDefinitions: Record<string, RemoteDefinition> = {
   'default-module': {
     scope: 'default_module',
-    url: 'http://localhost:3001/remoteEntry.js',
+    url: getModuleUrl(
+      'default-module',
+      'http://localhost:3001/remoteEntry.js',
+      'https://hotcode-demo-module.web.app/remoteEntry.js'
+    ),
     module: './Module'
   },
   'chat-module': {
     scope: 'chat_module',
-    url: 'http://localhost:3002/remoteEntry.js',
+    url: getModuleUrl(
+      'chat-module',
+      'http://localhost:3002/remoteEntry.js',
+      'https://hotcode-chat-module.web.app/remoteEntry.js'
+    ),
     module: './Module'
   }
 };

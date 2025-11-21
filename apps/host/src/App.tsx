@@ -80,7 +80,12 @@ const App = () => {
                   fallback={
                     <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
                       <h2 style={{ color: '#ef4444' }}>⚠️ Module Error</h2>
-                      <p style={{ marginTop: '1rem', opacity: 0.7 }}>
+                      <p style={{ 
+                        marginTop: '1rem', 
+                        color: typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark' 
+                          ? '#cbd5e1' 
+                          : '#64748b' 
+                      }}>
                         The module "{module.manifest.title}" encountered an error.
                       </p>
                       <button

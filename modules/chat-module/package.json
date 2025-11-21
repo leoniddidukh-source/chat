@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "webpack serve",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "build:with-key": "cross-env GEMINI_API_KEY=AIzaSyA5AH7ZVz88dgKmRyvY_qlfpY3v7fYSXVI webpack --mode production",
+    "deploy": "npm run build:with-key && firebase deploy --only hosting"
   },
   "dependencies": {
     "@google/genai": "^1.29.1",
@@ -15,6 +17,7 @@
   "devDependencies": {
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
@@ -24,4 +27,3 @@
     "webpack-dev-server": "^5.1.0"
   }
 }
-

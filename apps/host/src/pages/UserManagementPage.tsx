@@ -7,6 +7,12 @@ const UserManagementPage = () => {
   const [users] = useState<UserConfig[]>(Object.values(DEFAULT_USERS));
   const [selectedUser, setSelectedUser] = useState<UserConfig | null>(null);
   const [editedPermissions, setEditedPermissions] = useState<PermissionKey[]>([]);
+  
+  // Get theme for text colors
+  const theme = typeof document !== 'undefined' ? document.documentElement.dataset.theme || 'light' : 'light';
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#f8fafc' : '#0f172a';
+  const textColorSecondary = isDark ? '#cbd5e1' : '#64748b';
 
   // Check if current user can manage users
   const canManage = user?.permissions.includes('*') || user?.permissions.includes('users.manage');
@@ -14,8 +20,8 @@ const UserManagementPage = () => {
   if (!canManage) {
     return (
       <section className="card">
-        <h2>Access Denied</h2>
-        <p>You don't have permission to manage users.</p>
+        <h2 style={{ color: textColor }}>Access Denied</h2>
+        <p style={{ color: textColorSecondary }}>You don't have permission to manage users.</p>
       </section>
     );
   }
@@ -57,8 +63,8 @@ const UserManagementPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <section className="card">
-        <h2>👥 User Management</h2>
-        <p style={{ marginTop: '0.5rem', opacity: 0.7 }}>
+        <h2 style={{ color: textColor }}>👥 User Management</h2>
+        <p style={{ marginTop: '0.5rem', color: textColorSecondary }}>
           Configure user permissions and roles. In production, this would connect to your user management system.
         </p>
       </section>
@@ -66,7 +72,7 @@ const UserManagementPage = () => {
       <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '1.5rem' }}>
         {/* User List */}
         <section className="card">
-          <h3 style={{ marginBottom: '1rem' }}>Users</h3>
+          <h3 style={{ marginBottom: '1rem', color: textColor }}>Users</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {users.map((userConfig) => (
               <button
@@ -82,16 +88,16 @@ const UserManagementPage = () => {
                   backgroundColor: selectedUser?.id === userConfig.id 
                     ? 'var(--color-bg)' 
                     : 'transparent',
-                  color: 'var(--color-text)',
+                  color: textColor,
                   cursor: 'pointer',
                   transition: 'all 0.2s'
                 }}
               >
-                <div style={{ fontWeight: '500', color: 'var(--color-text)' }}>{userConfig.name}</div>
-                <div style={{ fontSize: '0.875rem', opacity: 0.7, marginTop: '0.25rem', color: 'var(--color-text)' }}>
+                <div style={{ fontWeight: '500', color: textColor }}>{userConfig.name}</div>
+                <div style={{ fontSize: '0.875rem', marginTop: '0.25rem', color: textColorSecondary }}>
                   {userConfig.email}
                 </div>
-                <div style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '0.25rem', color: 'var(--color-text)' }}>
+                <div style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: textColorSecondary }}>
                   {userConfig.role}
                 </div>
               </button>
@@ -104,8 +110,8 @@ const UserManagementPage = () => {
           <section className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <div>
-                <h3>{selectedUser.name}</h3>
-                <p style={{ fontSize: '0.875rem', opacity: 0.7, marginTop: '0.25rem' }}>
+                <h3 style={{ color: textColor }}>{selectedUser.name}</h3>
+                <p style={{ fontSize: '0.875rem', color: textColorSecondary, marginTop: '0.25rem' }}>
                   {selectedUser.email} • {selectedUser.role}
                 </p>
               </div>
@@ -115,7 +121,7 @@ const UserManagementPage = () => {
             </div>
 
             <div style={{ marginBottom: '1rem' }}>
-              <h4 style={{ marginBottom: '0.75rem' }}>Permissions</h4>
+              <h4 style={{ marginBottom: '0.75rem', color: textColor }}>Permissions</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {allPermissions.map(({ key, label }) => (
                   <label
@@ -140,8 +146,8 @@ const UserManagementPage = () => {
                       style={{ width: '1.25rem', height: '1.25rem', cursor: 'pointer' }}
                     />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: '500', color: 'var(--color-text)' }}>{label}</div>
-                      <div style={{ fontSize: '0.75rem', opacity: 0.6, fontFamily: 'monospace', color: 'var(--color-text)' }}>
+                      <div style={{ fontWeight: '500', color: textColor }}>{label}</div>
+                      <div style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: textColorSecondary }}>
                         {key}
                       </div>
                     </div>
@@ -166,18 +172,18 @@ const UserManagementPage = () => {
               backgroundColor: 'var(--color-bg)', 
               borderRadius: '8px',
               fontSize: '0.875rem',
-              color: 'var(--color-text)'
+              color: textColor
             }}>
-              <strong style={{ color: 'var(--color-text)' }}>Current Permissions:</strong>
-              <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', color: 'var(--color-text)' }}>
+              <strong style={{ color: textColor }}>Current Permissions:</strong>
+              <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', color: textColor }}>
                 {editedPermissions.length > 0 ? (
                   editedPermissions.map(p => (
-                    <div key={p} style={{ marginTop: '0.25rem', color: 'var(--color-text)' }}>
+                    <div key={p} style={{ marginTop: '0.25rem', color: textColorSecondary }}>
                       • {p} {AVAILABLE_PERMISSIONS[p as keyof typeof AVAILABLE_PERMISSIONS] && `(${AVAILABLE_PERMISSIONS[p as keyof typeof AVAILABLE_PERMISSIONS]})`}
                     </div>
                   ))
                 ) : (
-                  <div style={{ opacity: 0.6, color: 'var(--color-text)' }}>No permissions assigned</div>
+                  <div style={{ color: textColorSecondary }}>No permissions assigned</div>
                 )}
               </div>
             </div>

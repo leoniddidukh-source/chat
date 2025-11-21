@@ -20,8 +20,8 @@ const AppLayout = () => {
   // 1. Show loading screen while Firebase is initializing
   if (!isAuthReady) {
     return (
-      <div className="h-screen w-full flex items-center justify-center" style={{ backgroundColor: 'var(--light)' }}>
-        <div className="font-medium text-base flex items-center" style={{ color: 'var(--dark)' }}>
+      <div className="h-screen w-full flex items-center justify-center" style={{ backgroundColor: '#F5F7FA' }}>
+        <div className="font-medium text-base flex items-center" style={{ color: '#2C3E50' }}>
           <svg className="animate-spin -ml-1 mr-3 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -45,11 +45,12 @@ const AppLayout = () => {
 
   // 3. If authenticated, show the main chat interface
   return (
-    <div className="h-screen w-screen flex items-stretch overflow-hidden" style={{ backgroundColor: 'var(--light)' }}>
+    <div className="w-full h-full flex items-stretch overflow-hidden" style={{ backgroundColor: '#F5F7FA', height: '100%', minHeight: 0, maxHeight: '100%' }}>
       
       {/* Main Chat Container - Fully Responsive */}
       <div 
-        className="w-screen h-full bg-white flex overflow-hidden relative rounded-none md:rounded-[10px] shadow-none md:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+        className="w-full h-full bg-white flex overflow-hidden relative rounded-none md:rounded-[10px] shadow-none md:shadow-[0_4px_12px_rgba(0,0,0,0.08)]"
+        style={{ height: '100%', minHeight: 0, maxHeight: '100%' }}
       >
         
         {/* Mobile Overlay */}
@@ -70,7 +71,7 @@ const AppLayout = () => {
         </div>
 
         {/* Chat Window Container */}
-        <div className="flex flex-col flex-grow min-w-0 bg-white relative z-[1] h-full">
+        <div className="flex flex-col flex-grow min-w-0 bg-white relative z-[1]" style={{ height: '100%', minHeight: 0, maxHeight: '100%', overflow: 'hidden' }}>
           <ChatWindow onMenuToggle={() => setIsUserListOpen(!isUserListOpen)} />
         </div>
       </div>

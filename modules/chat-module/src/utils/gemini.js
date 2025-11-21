@@ -1,28 +1,38 @@
 import { GoogleGenAI } from '@google/genai';
 
 // Gemini API configuration
-// In the webpack environment we do not have `import.meta.env`
-// so we read from window/global configuration or fallback to a placeholder.
+// Webpack's DefinePlugin will replace process.env.GEMINI_API_KEY with the actual string at build time
+// Define it as a constant that webpack can statically replace
+const GEMINI_API_KEY_BUILD_TIME = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY';
+
 const getGeminiApiKey = () => {
+  // First check window (for runtime injection/override)
   if (typeof window !== 'undefined') {
     const envFromWindow =
       window.__APP_CONFIG__?.GEMINI_API_KEY ||
       window.__APP_CONFIG__?.VITE_GEMINI_API_KEY ||
       window.GEMINI_API_KEY ||
       window.VITE_GEMINI_API_KEY;
-    if (envFromWindow) {
+    if (envFromWindow && envFromWindow !== 'YOUR_GEMINI_API_KEY') {
+      console.log('Gemini API key found in window:', envFromWindow.substring(0, 10) + '...');
       return envFromWindow;
     }
   }
 
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY';
+  // Use the build-time injected key (webpack DefinePlugin replaces process.env.* with string literals)
+  const webpackKey = GEMINI_API_KEY_BUILD_TIME;
+  
+  if (webpackKey && webpackKey !== 'YOUR_GEMINI_API_KEY' && webpackKey !== '') {
+    console.log('Gemini API key found from webpack DefinePlugin:', webpackKey.substring(0, 10) + '...');
+    return webpackKey;
   }
 
+  console.warn('Gemini API key not found. Check build configuration.');
   return 'YOUR_GEMINI_API_KEY';
 };
 
 const GEMINI_API_KEY = getGeminiApiKey();
+console.log('Gemini API key initialized:', GEMINI_API_KEY !== 'YOUR_GEMINI_API_KEY' ? 'Yes' : 'No');
 
 let genAI = null;
 
@@ -43,20 +53,27 @@ const initializeGemini = () => {
 // Send message to Gemini AI and get response
 export const sendToGemini = async (message, chatHistory = []) => {
   try {
+    console.log('sendToGemini called with message:', message.substring(0, 50) + '...', 'history length:', chatHistory.length);
     const ai = initializeGemini();
     
     if (!ai) {
+      console.error('Gemini AI is not initialized');
       throw new Error('Gemini AI is not initialized. Please set VITE_GEMINI_API_KEY environment variable.');
     }
+
+    console.log('Gemini AI instance:', ai ? 'available' : 'null');
+    console.log('Available methods:', Object.keys(ai || {}));
 
     // Format chat history for Gemini (only include last 10 messages for context)
     // If no history, use simple string format
     if (chatHistory.length === 0) {
       // Simple case: just send the message as a string
+      console.log('Sending simple message (no history) to gemini-2.5-flash');
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: message,
       });
+      console.log('Gemini response received:', response ? 'yes' : 'no', response?.text ? response.text.substring(0, 50) + '...' : 'no text');
       return response.text;
     }
 
@@ -101,24 +118,36 @@ export const sendToGemini = async (message, chatHistory = []) => {
     let response;
     const models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-pro', 'gemini-1.5-pro'];
     
+    console.log('Trying models with contents:', JSON.stringify(contents).substring(0, 200) + '...');
+    
     for (const model of models) {
       try {
+        console.log(`Attempting to call model: ${model}`);
         response = await ai.models.generateContent({
           model: model,
           contents: contents,
         });
+        console.log(`Success with model ${model}, response:`, response ? 'received' : 'null');
         break; // Success, exit loop
       } catch (modelError) {
+        console.error(`Model ${model} failed:`, modelError.message);
         if (model === models[models.length - 1]) {
           // Last model failed, throw error
+          console.error('All models failed, throwing error');
           throw modelError;
         }
         // Try next model
+        console.log(`Trying next model...`);
         continue;
       }
     }
 
+    if (!response) {
+      throw new Error('No response from Gemini API');
+    }
+
     const text = response.text;
+    console.log('Final response text length:', text ? text.length : 0);
     return text;
   } catch (error) {
     console.error('Error calling Gemini API:', error);

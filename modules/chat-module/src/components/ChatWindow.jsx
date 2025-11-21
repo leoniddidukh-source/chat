@@ -208,11 +208,17 @@ const ChatWindow = ({ onMenuToggle }) => {
     return name.substring(0, 2).toUpperCase();
   };
 
+  // Get theme for text colors
+  const theme = typeof document !== 'undefined' ? document.documentElement.dataset.theme || 'light' : 'light';
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#f8fafc' : '#2C3E50';
+  const textColorSecondary = isDark ? '#cbd5e1' : '#6C7A89';
+
   return (
-    <div className="flex flex-col flex-grow min-h-0 min-w-0 bg-white relative z-[1] h-full">
+    <div className="flex flex-col h-full min-h-0 min-w-0 bg-white relative z-[1]" style={{ height: '100%', maxHeight: '100%', overflow: 'hidden' }}>
       {/* Chat Header */}
       <div 
-        className="px-3 md:px-5 py-3 md:py-4 border-b flex items-center gap-2 md:gap-4"
+        className="px-3 md:px-5 py-3 md:py-4 border-b flex items-center gap-2 md:gap-4 flex-shrink-0"
         style={{ borderColor: '#E1E4E8' }}
       >
         {/* Mobile Menu Toggle */}
@@ -220,14 +226,14 @@ const ChatWindow = ({ onMenuToggle }) => {
           <button
             onClick={onMenuToggle}
             className="md:hidden w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 flex-shrink-0"
-            style={{ color: 'var(--secondary)' }}
+            style={{ color: '#6C7A89' }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--light)';
-              e.currentTarget.style.color = 'var(--primary)';
+              e.currentTarget.style.backgroundColor = '#F5F7FA';
+              e.currentTarget.style.color = '#2D5BFF';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = 'var(--secondary)';
+              e.currentTarget.style.color = '#6C7A89';
             }}
             title="Toggle Menu"
           >
@@ -238,18 +244,26 @@ const ChatWindow = ({ onMenuToggle }) => {
         {/* Avatar */}
         <div 
           className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-semibold text-sm md:text-base flex-shrink-0"
-          style={{ backgroundColor: isAI ? 'var(--primary-light)' : 'var(--light)', color: isAI ? 'var(--primary)' : 'var(--dark)' }}
+          style={{ backgroundColor: isAI ? '#E9EEFF' : '#F5F7FA', color: isAI ? '#2D5BFF' : '#2C3E50' }}
         >
           {isAI ? '🤖' : getUserInitials(selectedRecipientName)}
         </div>
 
         {/* Chat Title */}
         <div className="flex-1 min-w-0">
-          <div className="font-semibold text-sm md:text-base flex items-center gap-1.5" style={{ color: 'var(--dark)' }}>
+          <div className="font-semibold text-sm md:text-base flex items-center gap-1.5" style={{ 
+            color: typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark' 
+              ? '#f8fafc' 
+              : '#2C3E50' 
+          }}>
             <span className="truncate">{selectedRecipientName}</span>
           </div>
           {!isAI && (
-            <div className="text-[10px] md:text-xs" style={{ color: 'var(--secondary)' }}>
+            <div className="text-[10px] md:text-xs" style={{ 
+              color: typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark' 
+                ? '#cbd5e1' 
+                : '#6C7A89' 
+            }}>
               {isRecipientOnline ? 'Online' : 'Offline'}
             </div>
           )}
@@ -262,7 +276,7 @@ const ChatWindow = ({ onMenuToggle }) => {
             onClick={() => setIsConfigOpen(true)}
             className="px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1 md:gap-1.5 cursor-pointer transition-all duration-300"
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--light)';
+              e.currentTarget.style.backgroundColor = '#F5F7FA';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
@@ -281,7 +295,7 @@ const ChatWindow = ({ onMenuToggle }) => {
               className="px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1 md:gap-1.5 cursor-pointer transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               onMouseEnter={(e) => {
                 if (!e.currentTarget.disabled) {
-                  e.currentTarget.style.backgroundColor = 'var(--light)';
+                  e.currentTarget.style.backgroundColor = '#F5F7FA';
                 }
               }}
               onMouseLeave={(e) => {
@@ -301,7 +315,7 @@ const ChatWindow = ({ onMenuToggle }) => {
             onClick={handleSignOut}
             className="px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1 md:gap-1.5 cursor-pointer transition-all duration-300"
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--light)';
+              e.currentTarget.style.backgroundColor = '#F5F7FA';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
@@ -315,9 +329,9 @@ const ChatWindow = ({ onMenuToggle }) => {
       </div>
       
       {/* Message Area */}
-      <main className="flex-grow overflow-y-auto px-3 md:px-5 py-3 md:py-5 flex flex-col gap-3 md:gap-4 bg-white" style={{ animation: 'fadeIn 0.3s ease' }}>
+      <main className="flex-1 overflow-y-auto px-3 md:px-5 py-3 md:py-5 flex flex-col gap-3 md:gap-4 bg-white min-h-0" style={{ animation: 'fadeIn 0.3s ease', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
         {isLoading && (
-          <div className="flex justify-center items-center h-full font-medium" style={{ color: 'var(--secondary)' }}>
+          <div className="flex justify-center items-center h-full font-medium" style={{ color: '#6C7A89' }}>
             <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -329,8 +343,8 @@ const ChatWindow = ({ onMenuToggle }) => {
         {!isLoading && messages.length === 0 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-5">
             <div className="text-5xl mb-4" style={{ color: '#d0d0d0' }}>💬</div>
-            <div className="text-base font-medium mb-2.5" style={{ color: 'var(--dark)' }}>No messages yet</div>
-            <div className="text-sm max-w-xs mx-auto" style={{ color: 'var(--secondary)' }}>
+            <div className="text-base font-medium mb-2.5" style={{ color: '#2C3E50' }}>No messages yet</div>
+            <div className="text-sm max-w-xs mx-auto" style={{ color: '#6C7A89' }}>
             Say hello to {selectedRecipientName} to start the conversation!
             </div>
           </div>
@@ -348,7 +362,7 @@ const ChatWindow = ({ onMenuToggle }) => {
 
       {/* Message Input Box */}
       <footer 
-        className="px-3 md:px-5 py-3 md:py-4 border-t flex items-center gap-2 md:gap-2.5"
+        className="px-3 md:px-5 py-3 md:py-4 border-t flex items-center gap-2 md:gap-2.5 flex-shrink-0"
         style={{ borderColor: '#E1E4E8' }}
       >
         <form onSubmit={sendMessage} className="flex items-center gap-2.5 flex-1">
@@ -369,19 +383,19 @@ const ChatWindow = ({ onMenuToggle }) => {
                 : ''
             }`}
             style={{ 
-              backgroundColor: 'var(--light)',
-              color: 'var(--secondary)'
+              backgroundColor: '#F5F7FA',
+              color: '#6C7A89'
             }}
             onMouseEnter={(e) => {
               if (!(!userId || isLoading || !selectedRecipientId || isUploadingFile || isAI)) {
-                e.currentTarget.style.backgroundColor = 'var(--primary-light)';
-                e.currentTarget.style.color = 'var(--primary)';
+                e.currentTarget.style.backgroundColor = '#E9EEFF';
+                e.currentTarget.style.color = '#2D5BFF';
               }
             }}
             onMouseLeave={(e) => {
               if (!(!userId || isLoading || !selectedRecipientId || isUploadingFile || isAI)) {
-                e.currentTarget.style.backgroundColor = 'var(--light)';
-                e.currentTarget.style.color = 'var(--secondary)';
+                e.currentTarget.style.backgroundColor = '#F5F7FA';
+                e.currentTarget.style.color = '#6C7A89';
               }
             }}
             title={isAI ? "File upload not available for AI assistant" : (isUploadingFile ? "Uploading..." : "Upload File")}
@@ -399,7 +413,7 @@ const ChatWindow = ({ onMenuToggle }) => {
               type="button"
               disabled
               className="w-8 h-8 md:w-9.5 md:h-9.5 rounded-full flex items-center justify-center cursor-not-allowed flex-shrink-0 opacity-50"
-              style={{ backgroundColor: 'var(--light)', color: 'var(--secondary)' }}
+              style={{ backgroundColor: '#F5F7FA', color: '#6C7A89' }}
               title="Uploading voice message..."
             >
               <span className="material-icons animate-spin text-lg md:text-xl">hourglass_empty</span>
@@ -410,7 +424,7 @@ const ChatWindow = ({ onMenuToggle }) => {
               onClick={startRecording}
               disabled={!userId || isLoading || !selectedRecipientId || isUploadingFile || isAI}
               className="w-8 h-8 md:w-9.5 md:h-9.5 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: 'var(--light)', color: 'var(--secondary)' }}
+              style={{ backgroundColor: '#F5F7FA', color: '#6C7A89' }}
               onMouseEnter={(e) => {
                 if (!(!userId || isLoading || !selectedRecipientId || isUploadingFile || isAI)) {
                   e.currentTarget.style.backgroundColor = 'var(--primary-light)';
@@ -419,8 +433,8 @@ const ChatWindow = ({ onMenuToggle }) => {
               }}
               onMouseLeave={(e) => {
                 if (!(!userId || isLoading || !selectedRecipientId || isUploadingFile || isAI)) {
-                  e.currentTarget.style.backgroundColor = 'var(--light)';
-                  e.currentTarget.style.color = 'var(--secondary)';
+                  e.currentTarget.style.backgroundColor = '#F5F7FA';
+                  e.currentTarget.style.color = '#6C7A89';
                 }
               }}
               title={isAI ? "Voice recording not available for AI assistant" : "Record Voice Message"}
@@ -432,7 +446,7 @@ const ChatWindow = ({ onMenuToggle }) => {
               type="button"
               onClick={stopRecording}
               className="w-8 h-8 md:w-9.5 md:h-9.5 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 animate-pulse"
-              style={{ backgroundColor: 'var(--danger)', color: 'white' }}
+              style={{ backgroundColor: '#E74C3C', color: 'white' }}
               title="Stop Recording"
             >
               <div className="flex items-center gap-1.5 md:gap-2">
@@ -450,7 +464,7 @@ const ChatWindow = ({ onMenuToggle }) => {
               onClick={() => setIsEmojiPickerOpen(prev => !prev)}
               disabled={!userId || isLoading || !selectedRecipientId || isRecording || isUploadingFile || isUploadingVoice}
               className="w-8 h-8 md:w-9.5 md:h-9.5 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: 'var(--light)', color: 'var(--secondary)' }}
+              style={{ backgroundColor: '#F5F7FA', color: '#6C7A89' }}
               onMouseEnter={(e) => {
                 if (!e.currentTarget.disabled) {
                   e.currentTarget.style.backgroundColor = 'var(--primary-light)';
@@ -459,8 +473,8 @@ const ChatWindow = ({ onMenuToggle }) => {
               }}
               onMouseLeave={(e) => {
                 if (!e.currentTarget.disabled) {
-                  e.currentTarget.style.backgroundColor = 'var(--light)';
-                  e.currentTarget.style.color = 'var(--secondary)';
+                  e.currentTarget.style.backgroundColor = '#F5F7FA';
+                  e.currentTarget.style.color = '#6C7A89';
                 }
               }}
               title="Add emoji"
@@ -499,11 +513,13 @@ const ChatWindow = ({ onMenuToggle }) => {
               className="w-full px-3 md:px-4 py-2 md:py-3 rounded-[20px] border text-xs md:text-sm transition-all duration-300 resize-none h-[40px] md:h-[45px] min-w-0 disabled:opacity-50"
               style={{
                 borderColor: '#E1E4E8',
-                fontSize: '14px'
+                fontSize: '14px',
+                color: '#2C3E50',
+                backgroundColor: '#FFFFFF'
               }}
               onFocus={(e) => {
-                e.target.style.borderColor = 'var(--primary)';
-                e.target.style.boxShadow = '0 0 0 2px var(--primary-light)';
+                e.target.style.borderColor = '#2D5BFF';
+                e.target.style.boxShadow = '0 0 0 2px #E9EEFF';
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = '#E1E4E8';
@@ -517,10 +533,14 @@ const ChatWindow = ({ onMenuToggle }) => {
           <button
             type="submit"
             disabled={!newMessage.trim() || !userId || isLoading || !selectedRecipientId || isRecording || isUploadingFile || isUploadingVoice}
-            className="w-8 h-8 md:w-9.5 md:h-9.5 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 flex-shrink-0 border-none disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-8 h-8 md:w-9.5 md:h-9.5 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 flex-shrink-0 border-none disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ 
-              backgroundColor: 'var(--primary)',
-              color: 'white'
+              backgroundColor: !newMessage.trim() || !userId || isLoading || !selectedRecipientId || isRecording || isUploadingFile || isUploadingVoice 
+                ? '#9CA3AF' 
+                : '#2D5BFF',
+              color: '#FFFFFF',
+              minWidth: '32px',
+              minHeight: '32px'
             }}
             onMouseEnter={(e) => {
               if (!e.currentTarget.disabled) {
@@ -530,13 +550,13 @@ const ChatWindow = ({ onMenuToggle }) => {
             }}
             onMouseLeave={(e) => {
               if (!e.currentTarget.disabled) {
-                e.currentTarget.style.backgroundColor = 'var(--primary)';
+                e.currentTarget.style.backgroundColor = '#2D5BFF';
                 e.currentTarget.style.transform = 'scale(1)';
               }
             }}
             aria-label="Send Message"
           >
-            <span className="material-icons text-base md:text-lg">send</span>
+            <span className="material-icons text-base md:text-lg" style={{ color: '#FFFFFF' }}>send</span>
           </button>
         </form>
       </footer>

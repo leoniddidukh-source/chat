@@ -6,6 +6,11 @@ interface DemoNavigationProps {
 
 const DemoNavigation = ({ basePath }: DemoNavigationProps) => {
   const location = useLocation();
+  // Get theme from document (set by ThemeProvider in Host App)
+  const theme = typeof document !== 'undefined' ? document.documentElement.dataset.theme || 'light' : 'light';
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#f8fafc' : '#0f172a';
+  
   const navItems = [
     { path: '/', label: 'Home', icon: '🏠', exact: true },
     { path: '/data', label: 'Data Table', icon: '📊', exact: false },
@@ -46,7 +51,7 @@ const DemoNavigation = ({ basePath }: DemoNavigationProps) => {
               fontWeight: '500',
               transition: 'all 0.2s',
               backgroundColor: active ? 'var(--color-primary)' : 'transparent',
-              color: active ? '#ffffff' : 'var(--color-text)',
+              color: active ? '#ffffff' : textColor,
               border: active ? 'none' : '1px solid var(--color-border)',
             }}
           >

@@ -66,8 +66,8 @@ module.exports = (env, argv) => {
     new ModuleFederationPlugin({
       name: 'host',
       remotes: {
-        'default-module': 'default_module@http://localhost:3001/remoteEntry.js',
-        'chat-module': 'chat_module@http://localhost:3002/remoteEntry.js',
+        'default-module': 'default_module@https://hotcode-demo-module.web.app/remoteEntry.js',
+        'chat-module': 'chat_module@https://hotcode-chat-module.web.app/remoteEntry.js',
       },
       shared: {
         react: {

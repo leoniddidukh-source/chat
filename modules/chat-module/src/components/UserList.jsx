@@ -59,10 +59,10 @@ const UserList = ({ onClose }) => {
     >
       {/* Sidebar Header */}
       <div className="p-5 border-b flex justify-between items-center" style={{ borderColor: '#E1E4E8' }}>
-        <div className="flex items-center gap-2.5 font-bold text-base" style={{ color: 'var(--primary)' }}>
+        <div className="flex items-center gap-2.5 font-bold text-base" style={{ color: '#2D5BFF' }}>
           <div 
             className="w-7 h-7 rounded-md flex items-center justify-center text-white text-sm font-bold"
-            style={{ backgroundColor: 'var(--primary)' }}
+            style={{ backgroundColor: '#2D5BFF' }}
           >
             💬
           </div>
@@ -90,26 +90,26 @@ const UserList = ({ onClose }) => {
         >
           <div 
             className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-base relative"
-            style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)' }}
+            style={{ backgroundColor: '#E9EEFF', color: '#2D5BFF' }}
           >
             🤖
             <span 
               className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white"
-              style={{ backgroundColor: 'var(--success)' }}
+              style={{ backgroundColor: '#27AE60' }}
             ></span>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="font-medium text-sm flex items-center justify-between" style={{ color: 'var(--dark)' }}>
+            <div className="font-medium text-sm flex items-center justify-between" style={{ color: '#2C3E50' }}>
               <span className="truncate">{AI_ASSISTANT.name}</span>
             </div>
-            <div className="text-xs truncate" style={{ color: 'var(--secondary)' }}>
+            <div className="text-xs truncate" style={{ color: '#6C7A89' }}>
               Powered by Google Gemini
             </div>
           </div>
         </div>
 
         {allUsers.length === 0 ? (
-          <div className="p-4 text-center text-sm" style={{ color: 'var(--secondary)' }}>
+          <div className="p-4 text-center text-sm" style={{ color: '#6C7A89' }}>
             No other contacts available
           </div>
         ) : (
@@ -129,22 +129,22 @@ const UserList = ({ onClose }) => {
                 >
                   <div 
                     className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-semibold text-xs md:text-base relative flex-shrink-0"
-                    style={{ backgroundColor: 'var(--light)', color: 'var(--dark)' }}
+                    style={{ backgroundColor: '#F5F7FA', color: '#2C3E50' }}
                   >
                     {getUserInitials(user.name)}
                     <span 
                       className={`absolute bottom-0 right-0 w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border-2 border-white ${
                         isOnline ? '' : 'bg-[var(--secondary)]'
                       }`}
-                      style={isOnline ? { backgroundColor: 'var(--success)' } : {}}
+                      style={isOnline ? { backgroundColor: '#27AE60' } : {}}
                     ></span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-xs md:text-sm flex items-center justify-between" style={{ color: 'var(--dark)' }}>
+                    <div className="font-medium text-xs md:text-sm flex items-center justify-between" style={{ color: '#2C3E50' }}>
                       <span className="truncate">{user.name}</span>
                     </div>
                     {user.email && (
-                      <div className="text-[10px] md:text-xs truncate" style={{ color: 'var(--secondary)' }}>
+                      <div className="text-[10px] md:text-xs truncate" style={{ color: '#6C7A89' }}>
                         {user.email}
                       </div>
                     )}
@@ -164,17 +164,17 @@ const UserList = ({ onClose }) => {
         {/* User Avatar */}
         <div 
           className="w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center font-semibold text-xs md:text-sm flex-shrink-0"
-          style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)' }}
+          style={{ backgroundColor: '#E9EEFF', color: '#2D5BFF' }}
         >
           {currentUserInitials}
         </div>
 
         {/* User Info */}
         <div className="flex-1 min-w-0 hidden sm:block">
-          <div className="font-medium text-xs" style={{ color: 'var(--dark)' }}>
+          <div className="font-medium text-xs" style={{ color: '#2C3E50' }}>
             {currentUserName || 'User'}
           </div>
-          <div className="text-[10px] md:text-[11px]" style={{ color: 'var(--secondary)' }}>
+          <div className="text-[10px] md:text-[11px]" style={{ color: '#6C7A89' }}>
             Online
           </div>
         </div>

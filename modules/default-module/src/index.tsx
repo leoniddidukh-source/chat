@@ -7,7 +7,15 @@ import DemoSettingsPage from './pages/DemoSettingsPage';
 const basePath = '/modules/demo';
 
 const ModulePageWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ padding: '1.5rem' }}>
+  <div style={{ 
+    padding: '1.5rem',
+    margin: '-2rem',
+    minHeight: 'calc(100vh - 200px)',
+    maxHeight: 'calc(100vh - 200px)',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    boxSizing: 'border-box'
+  }}>
     <DemoNavigation basePath={basePath} />
     {children}
   </div>

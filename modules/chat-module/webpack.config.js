@@ -1,12 +1,28 @@
 const path = require('path');
+const webpack = require('webpack');
 const ModuleFederationPlugin = require('webpack').container.ModuleFederationPlugin;
 
-module.exports = {
-  mode: 'development',
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === 'production' || process.env.NODE_ENV === 'production';
+  
+  // Debug: Check if GEMINI_API_KEY is available
+  const geminiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || 'AIzaSyA5AH7ZVz88dgKmRyvY_qlfpY3v7fYSXVI';
+  console.log('Webpack config - GEMINI_API_KEY from env:', process.env.GEMINI_API_KEY ? 'SET' : 'NOT SET');
+  console.log('Webpack config - VITE_GEMINI_API_KEY from env:', process.env.VITE_GEMINI_API_KEY ? 'SET' : 'NOT SET');
+  console.log('Webpack config - Using key:', geminiKey.substring(0, 10) + '...');
+  
+  return {
+  mode: isProduction ? 'production' : 'development',
   entry: './src/index.tsx',
-  devtool: 'source-map',
+  devtool: isProduction ? false : 'source-map',
   output: {
-    publicPath: 'http://localhost:3002/',
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[contenthash].js',
+    clean: true,
+    // Use full URL in production so chunks load from the correct domain
+    publicPath: isProduction 
+      ? 'https://hotcode-chat-module.web.app/'
+      : 'http://localhost:3002/',
     environment: {
       module: false,
     },
@@ -68,6 +84,10 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.GEMINI_API_KEY': JSON.stringify(geminiKey),
+      'process.env.VITE_GEMINI_API_KEY': JSON.stringify(geminiKey),
+    }),
     new ModuleFederationPlugin({
       name: 'chat_module',
       filename: 'remoteEntry.js',
@@ -99,5 +119,6 @@ module.exports = {
       },
     }),
   ],
+  };
 };
 

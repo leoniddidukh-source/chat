@@ -22,6 +22,11 @@
   margin-top: 1rem;
 }
 
+/* Improve text visibility in dark theme */
+[data-theme="dark"] .sidebar-label {
+  opacity: 0.8;
+}
+
 .sidebar-link {
   display: block;
   padding: 0.5rem 0.75rem;
@@ -44,7 +49,8 @@
 .app-main {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .app-header {
@@ -54,6 +60,7 @@
   padding: 1.5rem;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 
 .header-meta {
@@ -67,6 +74,11 @@
   opacity: 0.7;
 }
 
+/* Improve text visibility in dark theme */
+[data-theme="dark"] .app-subtitle {
+  opacity: 0.9;
+}
+
 .header-actions {
   display: flex;
   gap: 0.75rem;
@@ -77,9 +89,25 @@
 }
 
 .app-content {
-  padding: 2rem;
-  flex: 1;
+  flex: 1 1 0;
   background: var(--color-bg);
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Add padding for non-module content (Dashboard, Modules, User Management pages) */
+.app-content:not(:has(.chat-module-root)):not(:has([class*="default-module"])) {
+  padding: 2rem;
+}
+
+/* Fallback for browsers that don't support :has() */
+.app-content > section.card,
+.app-content > div:not(.chat-module-root):not([class*="default-module"]) {
+  padding: 2rem;
 }
 
 .primary-button,
@@ -99,6 +127,12 @@
 .secondary-button {
   background: #e2e8f0;
   color: var(--color-text);
+}
+
+/* Improve secondary button visibility in dark theme */
+[data-theme="dark"] .secondary-button {
+  background: #334155;
+  color: #f8fafc;
 }
 
 .ghost-button {

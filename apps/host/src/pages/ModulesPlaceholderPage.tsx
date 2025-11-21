@@ -5,6 +5,12 @@ const ModulesPlaceholderPage = () => {
   const { modules, enableModule, disableModule } = useModuleRegistry();
   const { user } = useAuth();
   const canManage = user?.permissions.includes('*') || user?.permissions.includes('modules.manage');
+  
+  // Get theme for text colors
+  const theme = typeof document !== 'undefined' ? document.documentElement.dataset.theme || 'light' : 'light';
+  const isDark = theme === 'dark';
+  const textColor = isDark ? '#f8fafc' : '#0f172a';
+  const textColorSecondary = isDark ? '#cbd5e1' : '#64748b';
 
   const toggleModule = (moduleId: string, enabled: boolean) => {
     if (enabled) {
@@ -17,8 +23,8 @@ const ModulesPlaceholderPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <section className="card">
-        <h2>📦 Module Management</h2>
-        <p style={{ marginTop: '0.5rem', opacity: 0.7 }}>
+        <h2 style={{ color: textColor }}>📦 Module Management</h2>
+        <p style={{ marginTop: '0.5rem', color: textColorSecondary }}>
           View and manage registered modules. Enable or disable modules as needed.
         </p>
       </section>
@@ -27,8 +33,8 @@ const ModulesPlaceholderPage = () => {
         <section className="card">
           <div style={{ textAlign: 'center', padding: '2rem' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📭</div>
-            <h3>No Modules Registered</h3>
-            <p style={{ opacity: 0.7, marginTop: '0.5rem' }}>
+            <h3 style={{ color: textColor }}>No Modules Registered</h3>
+            <p style={{ color: textColorSecondary, marginTop: '0.5rem' }}>
               Modules will appear here once they are registered in the system.
             </p>
           </div>
@@ -47,7 +53,7 @@ const ModulesPlaceholderPage = () => {
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                       <span style={{ fontSize: '1.5rem' }}>{module.manifest.icon || '📦'}</span>
-                      <h3 style={{ margin: 0 }}>{module.manifest.title}</h3>
+                      <h3 style={{ margin: 0, color: textColor }}>{module.manifest.title}</h3>
                       <span
                         style={{
                           padding: '0.25rem 0.75rem',
@@ -84,33 +90,33 @@ const ModulesPlaceholderPage = () => {
                     </div>
 
                     <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-                        <strong>ID:</strong> <code style={{ fontFamily: 'monospace' }}>{module.manifest.id}</code>
+                      <div style={{ fontSize: '0.875rem', color: textColorSecondary }}>
+                        <strong style={{ color: textColor }}>ID:</strong> <code style={{ fontFamily: 'monospace', color: textColorSecondary }}>{module.manifest.id}</code>
                       </div>
                       
                       {module.manifest.description && (
-                        <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-                          <strong>Description:</strong> {module.manifest.description}
+                        <div style={{ fontSize: '0.875rem', color: textColorSecondary }}>
+                          <strong style={{ color: textColor }}>Description:</strong> {module.manifest.description}
                         </div>
                       )}
 
                       {module.manifest.version && (
-                        <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-                          <strong>Version:</strong> {module.manifest.version}
+                        <div style={{ fontSize: '0.875rem', color: textColorSecondary }}>
+                          <strong style={{ color: textColor }}>Version:</strong> {module.manifest.version}
                         </div>
                       )}
 
-                      <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-                        <strong>Base Path:</strong> <code style={{ fontFamily: 'monospace' }}>{module.manifest.basePath}</code>
+                      <div style={{ fontSize: '0.875rem', color: textColorSecondary }}>
+                        <strong style={{ color: textColor }}>Base Path:</strong> <code style={{ fontFamily: 'monospace', color: textColorSecondary }}>{module.manifest.basePath}</code>
                       </div>
 
-                      <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-                        <strong>Routes:</strong> {module.routes.length} route(s)
+                      <div style={{ fontSize: '0.875rem', color: textColorSecondary }}>
+                        <strong style={{ color: textColor }}>Routes:</strong> {module.routes.length} route(s)
                       </div>
 
                       {module.manifest.requiredPermissions.length > 0 && (
-                        <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-                          <strong>Required Permissions:</strong>
+                        <div style={{ fontSize: '0.875rem', color: textColorSecondary }}>
+                          <strong style={{ color: textColor }}>Required Permissions:</strong>
                           <div style={{ marginTop: '0.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
                             {module.manifest.requiredPermissions.map((perm: string) => (
                               <span
@@ -120,7 +126,8 @@ const ModulesPlaceholderPage = () => {
                                   backgroundColor: 'var(--color-bg)',
                                   borderRadius: '4px',
                                   fontFamily: 'monospace',
-                                  fontSize: '0.75rem'
+                                  fontSize: '0.75rem',
+                                  color: textColorSecondary
                                 }}
                               >
                                 {perm}
@@ -131,8 +138,8 @@ const ModulesPlaceholderPage = () => {
                       )}
 
                       {module.manifest.dependencies && module.manifest.dependencies.length > 0 && (
-                        <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>
-                          <strong>Dependencies:</strong>
+                        <div style={{ fontSize: '0.875rem', color: textColorSecondary }}>
+                          <strong style={{ color: textColor }}>Dependencies:</strong>
                           <div style={{ marginTop: '0.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
                             {module.manifest.dependencies.map((dep: string) => (
                               <span
@@ -142,7 +149,8 @@ const ModulesPlaceholderPage = () => {
                                   backgroundColor: 'var(--color-bg)',
                                   borderRadius: '4px',
                                   fontFamily: 'monospace',
-                                  fontSize: '0.75rem'
+                                  fontSize: '0.75rem',
+                                  color: textColorSecondary
                                 }}
                               >
                                 {dep}
@@ -175,7 +183,7 @@ const ModulesPlaceholderPage = () => {
 
       {!canManage && modules.length > 0 && (
         <section className="card" style={{ backgroundColor: 'var(--color-bg)' }}>
-          <p style={{ fontSize: '0.875rem', opacity: '0.7', margin: 0 }}>
+          <p style={{ fontSize: '0.875rem', color: textColorSecondary, margin: 0 }}>
             ℹ️ You don't have permission to manage modules. Contact an administrator to enable or disable modules.
           </p>
         </section>

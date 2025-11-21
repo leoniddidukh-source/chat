@@ -148,7 +148,7 @@ const Message = ({ message }) => {
       {!isUserMessage && (
         <div 
           className="w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs flex-shrink-0"
-          style={{ backgroundColor: 'var(--light)', color: 'var(--dark)' }}
+          style={{ backgroundColor: '#F5F7FA', color: '#2C3E50' }}
         >
           {isAIMessage ? '🤖' : getUserInitials(senderName)}
         </div>
@@ -160,7 +160,7 @@ const Message = ({ message }) => {
         {!isUserMessage && (
           <div 
             className="text-xs font-medium mb-0.5"
-            style={{ color: 'var(--secondary)' }}
+            style={{ color: '#6C7A89' }}
           >
             {senderName}
           </div>
@@ -175,8 +175,8 @@ const Message = ({ message }) => {
             }`}
           style={
             isUserMessage
-              ? { backgroundColor: 'var(--primary)', color: 'white' }
-              : { backgroundColor: 'var(--light)', color: 'var(--dark)' }
+              ? { backgroundColor: '#2D5BFF', color: '#FFFFFF' }
+              : { backgroundColor: '#F5F7FA', color: '#2C3E50' }
           }
         >
         
@@ -229,9 +229,9 @@ const Message = ({ message }) => {
                             className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-xl border p-2 z-50 max-h-48 overflow-y-auto min-w-[200px]"
                             style={{ borderColor: '#E1E4E8' }}
                           >
-                            <div className="text-xs font-semibold mb-2 px-2" style={{ color: 'var(--primary)' }}>Forward to:</div>
+                            <div className="text-xs font-semibold mb-2 px-2" style={{ color: '#2D5BFF' }}>Forward to:</div>
                             {getAvailableRecipients().length === 0 ? (
-                              <div className="text-xs px-2 py-1" style={{ color: 'var(--secondary)' }}>No other users available</div>
+                              <div className="text-xs px-2 py-1" style={{ color: '#6C7A89' }}>No other users available</div>
                             ) : (
                               getAvailableRecipients().map(recipient => (
                                 <button
@@ -241,8 +241,8 @@ const Message = ({ message }) => {
                                     handleForward(recipient.id);
                                   }}
                                   className="w-full text-left px-2 py-1 text-sm rounded transition"
-                                  style={{ color: 'var(--dark)' }}
-                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--light)'}
+                                  style={{ color: '#2C3E50' }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F5F7FA'}
                                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                   disabled={isForwarding}
                                 >
@@ -256,7 +256,7 @@ const Message = ({ message }) => {
                     )}
                   </div>
                   {/* File info below image */}
-                  <div className="mt-1 flex items-center justify-between text-xs" style={{ color: isUserMessage ? 'rgba(255,255,255,0.8)' : 'var(--secondary)' }}>
+                  <div className="mt-1 flex items-center justify-between text-xs" style={{ color: isUserMessage ? 'rgba(255,255,255,0.9)' : '#6C7A89' }}>
                     <span>{message.fileName || 'Image'}</span>
                     {message.fileSize && (
                       <span>{(message.fileSize / 1024).toFixed(1)} KB</span>
@@ -269,8 +269,8 @@ const Message = ({ message }) => {
                 className="flex items-center gap-2 p-2 rounded-lg transition-all duration-300 border"
                 style={
                   isUserMessage
-                    ? { backgroundColor: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.3)', color: 'white' }
-                    : { backgroundColor: 'var(--light)', borderColor: '#E1E4E8', color: 'var(--dark)' }
+                    ? { backgroundColor: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.3)', color: '#FFFFFF' }
+                    : { backgroundColor: '#F5F7FA', borderColor: '#E1E4E8', color: '#2C3E50' }
                 }
               >
                 <span className="material-icons text-xl">description</span>
@@ -310,9 +310,9 @@ const Message = ({ message }) => {
                           className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-xl border p-2 z-50 max-h-48 overflow-y-auto min-w-[200px]"
                           style={{ borderColor: '#E1E4E8' }}
                         >
-                          <div className="text-xs font-semibold mb-2 px-2" style={{ color: 'var(--primary)' }}>Forward to:</div>
+                          <div className="text-xs font-semibold mb-2 px-2" style={{ color: '#2D5BFF' }}>Forward to:</div>
                           {getAvailableRecipients().length === 0 ? (
-                            <div className="text-xs px-2 py-1" style={{ color: 'var(--secondary)' }}>No other users available</div>
+                            <div className="text-xs px-2 py-1" style={{ color: '#6C7A89' }}>No other users available</div>
                           ) : (
                             getAvailableRecipients().map(recipient => (
                               <button
@@ -322,8 +322,8 @@ const Message = ({ message }) => {
                                   handleForward(recipient.id);
                                 }}
                                 className="w-full text-left px-2 py-1 text-sm rounded transition"
-                                style={{ color: 'var(--dark)' }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--light)'}
+                                style={{ color: '#2C3E50' }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F5F7FA'}
                                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                                 disabled={isForwarding}
                               >
@@ -369,7 +369,7 @@ const Message = ({ message }) => {
         {/* Message Meta (Time) */}
         <div 
           className="flex items-center gap-1 text-xs mt-0.5 ml-auto"
-          style={{ color: isUserMessage ? '#e0e0e0' : 'var(--secondary)' }}
+          style={{ color: isUserMessage ? 'rgba(255,255,255,0.9)' : '#6C7A89' }}
         >
           {timeString}
         </div>

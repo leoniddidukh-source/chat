@@ -21,18 +21,23 @@ const DemoHomePage = () => {
   const { user } = useMockAuth();
   // Get theme from document (set by ThemeProvider in Host App)
   const theme = typeof document !== 'undefined' ? document.documentElement.dataset.theme || 'light' : 'light';
+  const isDark = theme === 'dark';
   const [counter, setCounter] = useState(0);
+
+  // Text colors for light/dark theme
+  const textColor = isDark ? '#f8fafc' : '#0f172a';
+  const textColorSecondary = isDark ? '#cbd5e1' : '#64748b';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <section className="card">
-        <h2>🎯 Demo Module - Home</h2>
-        <p>This is a fully functional demo module showcasing the modular ERP platform capabilities.</p>
+        <h2 style={{ color: textColor }}>🎯 Demo Module - Home</h2>
+        <p style={{ color: textColorSecondary }}>This is a fully functional demo module showcasing the modular ERP platform capabilities.</p>
       </section>
 
       <section className="card">
-        <h3>User Information</h3>
-        <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <h3 style={{ color: textColor }}>User Information</h3>
+        <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: textColor }}>
           <p><strong>Current User:</strong> {user?.name || 'Not logged in'}</p>
           <p><strong>Role:</strong> {user?.role || 'N/A'}</p>
           <p><strong>Permissions:</strong> {user?.permissions?.join(', ') || 'None'}</p>
@@ -41,7 +46,7 @@ const DemoHomePage = () => {
       </section>
 
       <section className="card">
-        <h3>Interactive Counter</h3>
+        <h3 style={{ color: textColor }}>Interactive Counter</h3>
         <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <button
             className="primary-button"
@@ -50,7 +55,7 @@ const DemoHomePage = () => {
           >
             -
           </button>
-          <span style={{ fontSize: '1.5rem', fontWeight: 'bold', minWidth: '3rem', textAlign: 'center' }}>
+          <span style={{ fontSize: '1.5rem', fontWeight: 'bold', minWidth: '3rem', textAlign: 'center', color: textColor }}>
             {counter}
           </span>
           <button
@@ -72,8 +77,8 @@ const DemoHomePage = () => {
       </section>
 
       <section className="card">
-        <h3>Module Features</h3>
-        <ul style={{ marginTop: '1rem', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <h3 style={{ color: textColor }}>Module Features</h3>
+        <ul style={{ marginTop: '1rem', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: textColor }}>
           <li>✅ Multiple routes and pages</li>
           <li>✅ Permission-based access control</li>
           <li>✅ Theme integration (light/dark)</li>

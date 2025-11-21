@@ -68,59 +68,126 @@ const ChatProvider = ({ children }) => {
 
   // 1. Firebase Initialization and Authentication
   useEffect(() => {
-    try {
-      if (!LOCAL_FALLBACK_CONFIG.apiKey || LOCAL_FALLBACK_CONFIG.apiKey === "YOUR_API_KEY") {
-        console.error("Firebase Initialization Skipped: Configuration is missing or placeholder.");
-        setIsLoading(false);
-        // Keep auth and db null to prevent operations
-        return; 
-      }
-      console.log(LOCAL_FALLBACK_CONFIG);
-      
+    let unsubscribe = null;
+    let timeoutId = null;
 
-      setDb(firestore);
-      setAuth(authInstance);
+    const initializeFirebase = async () => {
+      try {
+        if (!LOCAL_FALLBACK_CONFIG.apiKey || LOCAL_FALLBACK_CONFIG.apiKey === "YOUR_API_KEY") {
+          console.error("Firebase Initialization Skipped: Configuration is missing or placeholder.");
+          setIsAuthReady(true); // Set to true so UI can show auth screen
+          setIsLoading(false);
+          return; 
+        }
+        console.log("Firebase Config:", LOCAL_FALLBACK_CONFIG);
+        
 
-      const unsubscribe = onAuthStateChanged(authInstance, async (user) => {
-        if (user) {
-          setUserId(user.uid);
-          // Get display name from user object (set by updateProfile or Google Auth)
-          setCurrentUserName(user.displayName || user.email || `User-${user.uid.slice(0, 5)}`); 
-          
-          // Set user as online in Firestore
-          if (firestore) {
-            try {
-              const userDocRef = doc(firestore, `users/${user.uid}`);
-              await setDoc(userDocRef, {
-                isOnline: true,
-                lastSeen: serverTimestamp(),
-                updatedAt: serverTimestamp()
-              }, { merge: true });
-            } catch (error) {
-              console.error("Error setting online status:", error);
-            }
-          }
+        setDb(firestore);
+        setAuth(authInstance);
+
+        console.log("Firebase initialized, checking auth state...");
+
+        // Check current auth state immediately
+        const currentUser = authInstance.currentUser;
+        if (currentUser) {
+          console.log("Current user found:", currentUser.uid);
+          setUserId(currentUser.uid);
+          setCurrentUserName(currentUser.displayName || currentUser.email || `User-${currentUser.uid.slice(0, 5)}`);
         } else {
-          // Only sign in anonymously if there's truly no user (no persisted session)
-          // Don't automatically sign in anonymously - let user choose to log in
+          console.log("No current user, waiting for auth state change...");
           setUserId(null);
           setCurrentUserName('Guest');
         }
-        setIsAuthReady(true);
-      });
 
-      // Attempt to sign in with the custom token if provided (Canvas environment)
-      if (initialAuthToken) {
-        signInWithCustomToken(authInstance, initialAuthToken).catch(error => {
-          console.error("Custom token sign-in failed, proceeding with fallback auth.", error);
+        // Set a timeout to ensure isAuthReady is set even if auth state change doesn't fire
+        timeoutId = setTimeout(() => {
+          console.warn("Firebase auth initialization timeout - setting auth ready");
+          setIsAuthReady(true);
+          setIsLoading(false);
+        }, 2000); // Reduced to 2 seconds
+
+        const handleAuthStateChange = async (user) => {
+          console.log("Auth state changed, user:", user ? user.uid : "null");
+          
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+          }
+
+          if (user) {
+            setUserId(user.uid);
+            // Get display name from user object (set by updateProfile or Google Auth)
+            setCurrentUserName(user.displayName || user.email || `User-${user.uid.slice(0, 5)}`); 
+            
+            // Set user as online in Firestore
+            if (firestore) {
+              try {
+                const userDocRef = doc(firestore, `users/${user.uid}`);
+                await setDoc(userDocRef, {
+                  isOnline: true,
+                  lastSeen: serverTimestamp(),
+                  updatedAt: serverTimestamp()
+                }, { merge: true });
+              } catch (error) {
+                console.error("Error setting online status:", error);
+              }
+            }
+          } else {
+            // Only sign in anonymously if there's truly no user (no persisted session)
+            // Don't automatically sign in anonymously - let user choose to log in
+            setUserId(null);
+            setCurrentUserName('Guest');
+          }
+          setIsAuthReady(true);
+          setIsLoading(false);
+        };
+
+        unsubscribe = onAuthStateChanged(authInstance, handleAuthStateChange, (error) => {
+          console.error("Auth state change error:", error);
+          setIsAuthReady(true); // Still set to true to show UI
+          setIsLoading(false);
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+          }
         });
-      }
 
-      return () => unsubscribe();
-    } catch (error) {
-      console.error("Error initializing Firebase:", error);
-      setIsLoading(false);
-    }
+        // If we already have a user, set ready immediately
+        if (currentUser) {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+            timeoutId = null;
+          }
+          setIsAuthReady(true);
+          setIsLoading(false);
+        }
+
+        // Attempt to sign in with the custom token if provided (Canvas environment)
+        if (initialAuthToken) {
+          signInWithCustomToken(authInstance, initialAuthToken).catch(error => {
+            console.error("Custom token sign-in failed, proceeding with fallback auth.", error);
+          });
+        }
+      } catch (error) {
+        console.error("Error initializing Firebase:", error);
+        setIsAuthReady(true); // Set to true so UI can show error/auth screen
+        setIsLoading(false);
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      }
+    };
+
+    initializeFirebase();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   // Fetch all registered users from Firestore and track online status
@@ -551,14 +618,29 @@ const ChatProvider = ({ children }) => {
   // 3. Send Message Handler
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !userId || !db || !selectedRecipientId) return;
+    console.log('sendMessage called', { 
+      hasMessage: !!newMessage.trim(), 
+      hasUserId: !!userId, 
+      hasDb: !!db, 
+      hasRecipient: !!selectedRecipientId,
+      recipientId: selectedRecipientId 
+    });
+    
+    if (!newMessage.trim() || !userId || !db || !selectedRecipientId) {
+      console.log('sendMessage: Missing required data, returning early');
+      return;
+    }
 
     const chatId = getChatId(userId, selectedRecipientId);
-    if (!chatId) return;
+    if (!chatId) {
+      console.log('sendMessage: Could not generate chatId');
+      return;
+    }
     
     const senderColor = userId.slice(0, 6);
     const messageText = newMessage.trim(); // Save message text before clearing
     const isAI = isAIAssistant(selectedRecipientId);
+    console.log('sendMessage: isAI check', { isAI, selectedRecipientId, AI_ASSISTANT_ID: AI_ASSISTANT.id });
 
     const messagePayload = {
       type: 'text',
@@ -572,88 +654,113 @@ const ChatProvider = ({ children }) => {
     try {
       // Store message in chats collection
       const messagesRef = collection(db, `chats/${chatId}/messages`);
-      await addDoc(messagesRef, messagePayload);
+      console.log('Saving user message to Firestore...', { chatId, messageText: messageText.substring(0, 50) });
       
-      // Update chat document with last message timestamp
-      const chatDocRef = doc(db, `chats/${chatId}`);
-      await setDoc(chatDocRef, {
-        lastMessageAt: serverTimestamp(),
-        lastMessage: messageText,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-      
-      setNewMessage('');
-      
-      // If sending to AI assistant, get AI response
-      if (isAI) {
-        if (!isGeminiAvailable()) {
-          // Save error message if Gemini is not configured
-          const errorMessagePayload = {
-            type: 'text',
-            text: 'Gemini AI is not configured. Please set the VITE_GEMINI_API_KEY environment variable.',
-            createdAt: serverTimestamp(),
-            senderId: AI_ASSISTANT.id,
-            receiverId: userId,
-            color: '4A90E2',
-          };
-          await addDoc(messagesRef, errorMessagePayload);
-          return;
-        }
+      // Use .then() instead of await to avoid blocking
+      addDoc(messagesRef, messagePayload).then(async (messageDocRef) => {
+        console.log('User message saved successfully, doc ID:', messageDocRef.id);
         
-        try {
-          // Prepare chat history for context
-          // Include current message and previous messages from this chat
-          const currentUserMessage = {
-            role: 'user',
-            text: messageText
-          };
+        // Update chat document with last message timestamp (non-blocking)
+        const chatDocRef = doc(db, `chats/${chatId}`);
+        console.log('Updating chat document...');
+        setDoc(chatDocRef, {
+          lastMessageAt: serverTimestamp(),
+          lastMessage: messageText,
+          updatedAt: serverTimestamp()
+        }, { merge: true }).then(() => {
+          console.log('Chat document updated');
+        }).catch((err) => {
+          console.error('Error updating chat document:', err);
+        });
+        
+        setNewMessage('');
+        console.log('Message input cleared, isAI:', isAI);
+        
+        // If sending to AI assistant, get AI response
+        console.log('Checking if message is to AI:', isAI, 'selectedRecipientId:', selectedRecipientId, 'AI_ASSISTANT.id:', AI_ASSISTANT.id);
+        if (isAI) {
+          console.log('Entered AI block - Message is to AI assistant, checking Gemini availability...');
+          if (!isGeminiAvailable()) {
+            console.error('Gemini is not available');
+            // Save error message if Gemini is not configured
+            const errorMessagePayload = {
+              type: 'text',
+              text: 'Gemini AI is not configured. Please set the VITE_GEMINI_API_KEY environment variable.',
+              createdAt: serverTimestamp(),
+              senderId: AI_ASSISTANT.id,
+              receiverId: userId,
+              color: '4A90E2',
+            };
+            await addDoc(messagesRef, errorMessagePayload);
+            return;
+          }
           
-          const previousMessages = messages
-            .filter(msg => msg.text && (msg.senderId === userId || msg.senderId === AI_ASSISTANT.id))
-            .slice(-9) // Last 9 messages (plus current = 10 total)
-            .map(msg => ({
-              role: msg.senderId === userId ? 'user' : 'model',
-              text: msg.text
-            }));
-          
-          const chatHistory = [...previousMessages, currentUserMessage];
+          console.log('Gemini is available, preparing to send message...');
+          try {
+            // Prepare chat history for context
+            // Include current message and previous messages from this chat
+            const currentUserMessage = {
+              role: 'user',
+              text: messageText
+            };
+            
+            const previousMessages = messages
+              .filter(msg => msg.text && (msg.senderId === userId || msg.senderId === AI_ASSISTANT.id))
+              .slice(-9) // Last 9 messages (plus current = 10 total)
+              .map(msg => ({
+                role: msg.senderId === userId ? 'user' : 'model',
+                text: msg.text
+              }));
+            
+            const chatHistory = [...previousMessages, currentUserMessage];
 
-          console.log('Sending to Gemini with chat history:', chatHistory.length, 'messages');
-          // Get AI response
-          const aiResponse = await sendToGemini(messageText, chatHistory);
+            console.log('Sending to Gemini with chat history:', chatHistory.length, 'messages');
+            console.log('Chat history:', JSON.stringify(chatHistory).substring(0, 200));
+            // Get AI response
+            const aiResponse = await sendToGemini(messageText, chatHistory);
+            console.log('Received AI response:', aiResponse ? aiResponse.substring(0, 100) + '...' : 'null');
 
-          // Save AI response as a message
-          const aiMessagePayload = {
-            type: 'text',
-            text: aiResponse,
-            createdAt: serverTimestamp(),
-            senderId: AI_ASSISTANT.id,
-            receiverId: userId,
-            color: '4A90E2', // Blue color for AI
-          };
+            // Save AI response as a message
+            const aiMessagePayload = {
+              type: 'text',
+              text: aiResponse,
+              createdAt: serverTimestamp(),
+              senderId: AI_ASSISTANT.id,
+              receiverId: userId,
+              color: '4A90E2', // Blue color for AI
+            };
 
-          await addDoc(messagesRef, aiMessagePayload);
+            await addDoc(messagesRef, aiMessagePayload);
 
-          // Update chat document with AI response
-          await setDoc(chatDocRef, {
-            lastMessageAt: serverTimestamp(),
-            lastMessage: aiResponse,
-            updatedAt: serverTimestamp()
-          }, { merge: true });
-        } catch (aiError) {
-          console.error("Error getting AI response:", aiError);
-          // Save error message
-          const errorMessagePayload = {
-            type: 'text',
-            text: 'Sorry, I encountered an error. Please make sure the Gemini API key is configured correctly.',
-            createdAt: serverTimestamp(),
-            senderId: AI_ASSISTANT.id,
-            receiverId: userId,
-            color: '4A90E2',
-          };
-          await addDoc(messagesRef, errorMessagePayload);
+            // Update chat document with AI response
+            await setDoc(chatDocRef, {
+              lastMessageAt: serverTimestamp(),
+              lastMessage: aiResponse,
+              updatedAt: serverTimestamp()
+            }, { merge: true });
+          } catch (aiError) {
+            console.error("Error getting AI response:", aiError);
+            // Save error message
+            const errorMessagePayload = {
+              type: 'text',
+              text: 'Sorry, I encountered an error. Please make sure the Gemini API key is configured correctly.',
+              createdAt: serverTimestamp(),
+              senderId: AI_ASSISTANT.id,
+              receiverId: userId,
+              color: '4A90E2',
+            };
+            await addDoc(messagesRef, errorMessagePayload);
+          }
         }
-      }
+      }).catch((saveError) => {
+        console.error('Error saving message to Firestore:', saveError);
+        console.error('Error code:', saveError?.code);
+        console.error('Error message:', saveError?.message);
+        console.error('Full error:', saveError);
+        
+        // Show user-friendly error
+        alert(`Failed to send message: ${saveError?.message || 'Unknown error'}. Please check Firestore security rules.`);
+      });
       
       // Chat history storage disabled to avoid CORS issues
       // Messages are already stored in Firestore, so storage backup is not needed
@@ -672,6 +779,7 @@ const ChatProvider = ({ children }) => {
       // }, 500);
     } catch (error) {
       console.error("Error sending message:", error);
+      console.error("Error details:", error.message, error.stack);
     }
   };
   

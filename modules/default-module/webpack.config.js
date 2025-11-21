@@ -1,12 +1,21 @@
 const path = require('path');
 const ModuleFederationPlugin = require('webpack').container.ModuleFederationPlugin;
 
-module.exports = {
-  mode: 'development',
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === 'production' || process.env.NODE_ENV === 'production';
+  
+  return {
+  mode: isProduction ? 'production' : 'development',
   entry: './src/index.tsx',
-  devtool: 'source-map',
+  devtool: isProduction ? false : 'source-map',
   output: {
-    publicPath: 'http://localhost:3001/',
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[contenthash].js',
+    clean: true,
+    // Use full URL in production so chunks load from the correct domain
+    publicPath: isProduction 
+      ? 'https://hotcode-demo-module.web.app/'
+      : 'http://localhost:3001/',
     environment: {
       module: false,
     },
@@ -77,5 +86,6 @@ module.exports = {
       },
     }),
   ],
+  };
 };
 
