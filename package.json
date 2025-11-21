@@ -16,6 +16,8 @@
     "build:host": "npm run build --workspace @erp/host",
     "build:default-module": "npm run build --workspace @modules/default-module",
     "build:chat-module": "npm run build --workspace @modules/chat-module",
-    "lint": "npm run lint --workspace @erp/host"
+    "lint": "npm run lint --workspace @erp/host",
+    "deploy": "npm run build && firebase deploy",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting"
   }
 }
